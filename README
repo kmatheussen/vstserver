@@ -1,0 +1,200 @@
+
+
+VSTServer V0.3.1.
+-----------------
+
+
+ABOUT
+
+	Vstserver is a program that must be running when using programs
+	using vstlib.
+
+	Vstlib is a library that can be used by programs to run windows
+	vst audio plugins under i386linux/i386freebsd/i386solaris/i386etc.
+	(May require som modifications for other os-es than i386linux).
+
+	Mandrake users can find rpm packages here: http://rpm.nyvalls.se/
+
+	A tutorial for vst plugins in linux can be found here:
+	http://www.djcj.org/LAU/quicktoots/toots/vst-plugins/
+
+
+RUNNING
+	Install the vstserver according to the instructions in the INSTALL file,
+	and start the program "vstserver".
+
+
+COMMON PROBLEMS
+
+	P: The vstservant program is not able to find any of the plugins placed
+	   in my $VST_PATH path.
+	S: Look at your $HOME/.wine/config file, and check that all drives
+	   are absolute paths. (Solution found by <fill in name>.)
+	
+
+DEVELOPMENT
+	Vstserver is released under the GPL, and vstlib under LGPL.
+
+	To use vstlib in a program, look at the tests/exampleclient program,
+	and various vst plug-in documentation.
+
+	You do currently not have access to the audioMaster callback function
+	from a client. If you need access to it, please contact me, and I'll
+	extend the library and the vstservant program.
+
+	Write "make doc" to make html documentation for vstlib in doc/html.
+
+
+CURRENT STATUS
+	Vstserver seems to be very stable. Very few vst plug-ins and instruments
+	wont run, and I am not able to hear any latency. And plug-ins does not
+	usually cause more cpu-power than under windows.
+
+
+
+DLLS NOT WORKING PERFECTLY
+	Check out http://80.61.20.184/vst/
+
+
+FUTURE
+	-Make a DX-plugin server. (would be fun running pi-warp under linux).
+	-Add gui to the plugins not providing gui themselves. (help wanted, windows
+	 programming)
+
+
+HISTORY
+	0.3.0 -> 0.3.1:
+	-Added a watchdog for the processthread if its running SCHED_FIFO. If the
+	 processthread use more than 10 seconds to process a chunk, it should be
+	 killed. Tested with an endless loop, and it seems to work.
+	-Added "make install" and "make uninstall".
+	-Updated the INSTALL file. The installation should now be a bit easier.
+
+	0.2.8 -> 0.3.0:
+	-Cache is updated when starting the vstserver. Also added some workaround code
+	 to avoid deadlocks. You may still sometime need to press ctrl-c and start vstserver
+	 again, but the problem is not as appeareant as before.
+	-Does not use realtime priority when updating cache only.
+	-Better documentation for vstlib. ("make doc")
+	-New functions in vstlib: VSTLIB_newCacheList, VSTLIB_deleteCacheList, VSTLIB_getName.
+	-Removed function in vstlib: VSTLIB_deleteCache. (Use VSTLIB_delete instead)
+	-All clients must be recompiled.
+	-Works with the latest version of wine at the time of writing, 9.12.2003.
+
+	0.2.7 -> 0.2.8:
+	-Added SCHED_FIFO priority and locking all mem (mlockall) to the processing thread.
+	 Can be used without being root by for example using the givertcap program by
+	 Tommi Ilmonen http://www.tml.hut.fi/~tilmonen/givertcap/
+	 To turn off realtime priority, start the vstserver with either the
+         "-NRT" or "--nonrealtime" flag.
+
+	0.2.6 -> 0.2.7:
+	-The vstserver program does not refuse to load a plugin if the release
+	 version number (Ie. 7 in 0.2.7) for the server differs from the library
+	 release version number for the client contacting the server.
+	-Fixed a typo that made processing of blocks larger than 1024 produce
+	 silence only. Bug reported by Dave Phillips.
+	-Latest version of wine from www.winehq.com still works fine with vstserver.
+	 If it doesnt, this one should:
+	 http://www.notam02.no/arkiv/src/vstserver-0.2.7-wine.tar.bz2
+
+	0.2.5 -> 0.2.6:
+	-Updated to compile with the 8.4.2003cvs version of wine. This version
+	 of Wine can be downloaded here:
+	 http://www.notam02.no/arkiv/src/vstserver-0.2.6-wine.tar.gz
+	 Other versions of wine may not (actually: usually not) work with vstserver
+	 without tweaking.
+	
+	0.2.4 -> 0.2.5:
+	-Reorganized the source a bit.
+	-Fixed (sort of) broken LOCKS_new function, and added a check for possible
+	 deadlock.
+	-Included the vst include files into the distribution.
+	-Removed the modified aeffectx.h file, it was perhaps a violation to some
+	 licence to include it. Included a diff-file instead. :)
+	 aeffectx.h is now automaticly patched by the makefile.
+	-Test for kEffectMagic when opening plugin.
+	-Added a version-test to vstserver to avoid having a client compiled with
+	 a different version of vstlib trying to start a plugin.
+	-Again, you have to recompile all programs linked with vstlib.a after upgrading.
+	 Will make a shared library as default when the API settles. Everything
+	 may still change. (However, this is not a very important upgrade from 0.2.4.)
+
+	0.2.3 -> 0.2.4:
+	-Removed linking with pthread from the vstserant program.
+	-Fixed various cache problems introduced in 0.2.3. The ladspavst plugin
+	 should hopefully work now after a recompile. Oops. 
+	 *****************************************************************
+	 You should delete all files in $HOME/.vstserver/cache before
+	 running this version of the vstserver.
+	 *****************************************************************
+	-Added note in the INSTALL file about a bug in the "winemaker" program
+	 found in the 19.12.2002 release of wine, and how to fix it.
+
+	0.2.2 -> 0.2.3:
+	-Only cache plug-in if client-handler returns non-minus one.
+	-Convert plugin names to lowercase and remove trailing .dll to avoid
+	 confusing the cache-mechanism.
+
+	0.2.1 -> 0.2.2:
+	-Moved the cache-mecanism code from the ladspavst plugin to the server
+	 and library. (earlier, my audacity version with vst-support used
+	 ½@ª@£$¥ time to start). Two new functions, VSTLIB_newCache(char*) and
+	 VSTLIB_deleteCache(AEffect*).
+	-Added locking when getting free sockets.
+
+
+	0.2.0 -> 0.2.1:
+	-Added support for the "effProcessEvents" dispatch opcode. Needed for 
+	 vst instruments.
+
+	0.1.1 -> 0.2.0:
+	-When upgrading my wine installation from the 31.10.2002 version to the
+	 25.11.2002 version, the
+	 "err:local:LOCAL_GetBlock not enough space in GDI heap 01f7 for 24 bytes"
+	 problem got much worse. So I changed the vstserver program to be a normal unix
+	 program that starts a winelib program called "vstservant.so" for each new request
+	 it gets. This seems to have solved the GDI heap problem totally.
+	-Extended the audioMaster function yet more by copying a lot of opcode handlings
+	 from the vst~ pd external by Mark Williamson. I didn't ask before doing this,
+	 but according to the pdf file, he used some code from the plugin~ external,
+	 which then should automaticly make vst~ GPL. The positive result is that more
+	 plugins works. The negative result is that you now need to patch the
+	 steinberg "vst/aeffectx.h" file before compiling, as there are some strange things
+	 in it.
+	-Some smaller fixes here and there.
+
+	0.1.0 -> 0.1.1:
+	-Replaced the old audioMaster function in the server with the one coming from
+	 the plugin~ source by Jarno Seppänen. Result is that GRM tools 2 now works.
+	 (I thought there were a different reason it didnt work before, without going
+	 into further detail...)
+	 Seems like vst instruments works better now too. The mousedrag problem seems
+	 to have dissapeared.
+
+	-Removed some debug printings.
+
+	0.0.2 -> 0.1.0:
+	-Added graphics support to the plug-ins. (effEditOpen/effEditClose dispatch
+	 opcodes works.)
+	-Fixed the makefile a bit.
+
+	0.0.1 -> 0.0.2:
+	-Fixed the process function in vstlib.
+	-Fixed the problem with processreplace could fail if sampleframes was to high.
+	-Added processreplace simulation to vstlib, in case plugin doesnt implement
+	 processreplace itself.
+
+
+CREDITS
+	vstserver and vstlib are made by Kjetil S. Matheussen / Notam.
+	k.s.matheussen@notam02.no
+
+	vstserver starts a winelib program called "vstservant". Winelib is made
+	by the wine-team, http://www.winehq.com.
+
+	Some programming hints is gathered by looking at the pd vst-object plugin~ source,
+	the pd vst-object vst~ source, and the jack soundserver source.
+
+
+

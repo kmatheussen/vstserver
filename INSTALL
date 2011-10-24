@@ -1,0 +1,64 @@
+
+
+****************
+*** Step **** 1.
+****************
+
+You need the complete wine-package. This includes
+the wine-binaries, libraries, utilities and include-files.
+
+Wine changes all the time, so the safest thing to do is
+to is to install the following version of wine:
+http://www.notam02.no/arkiv/src/vstserver-wine.tar.bz2
+This is necesarry, because 90% of the bug-reports I get
+is because wine changes so much.
+
+If you want to try the latest version of wine instead
+of vstserver-wine (allthough it probably wont work with
+the vstserver), you'll find it here: http://wwww.winehq.com
+
+To install wine, the following procedure normally works fine:
+
+bzip2 -d vstserver-wine.tar.bz2
+tar xvf vstserver-wine.tar
+cd wine
+tool/wineinstall
+
+
+
+
+****************
+*** Step **** 2.
+****************
+
+Set the environment variable $VST_PATH to a directory where
+you have your vst-plugins. It must be a unix path
+(starting with '/') and not an msdos path.
+
+
+
+****************
+*** Step **** 3.
+****************
+
+After that, just writing "make" inside the vstserver directory
+should compile up everything. (hopefully).
+
+If you have wine installed somewhere else than in
+/usr/local/, change the "WINEPATH" variable at the top of the makefile.
+
+After compiling, do "make install" as root.
+
+
+
+-------------------
+Last updated 4.2.2004.
+k.s.matheussen@notam02.no
+
+
+
+
+
+
+
+

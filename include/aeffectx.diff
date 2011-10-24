@@ -1,0 +1,40 @@
+--- aeffectx.h	Thu Jan  2 01:18:50 2003
++++ aeffectx_changed.h	Thu Jan  2 01:24:27 2003
+@@ -154,7 +154,7 @@
+ {
+ 	// VstEvents + VstTimeInfo
+ 	audioMasterWantMidi = audioMasterPinConnected + 2,	// <value> is a filter which is currently ignored
+-	audioMasterGetTime,				// returns const VstTimeInfo* (or 0 if not supported)
++	audioMasterGetTime, // returns const VstTimeInfo* (or 0 if not supported)
+ 									// <value> should contain a mask indicating which fields are required
+ 									// (see valid masks above), as some items may require extensive
+ 									// conversions
+@@ -742,8 +742,17 @@
+ 
+ 
+ // use by audioMasterOpenFileSelector
+-struct VstFileType
++
++
++#ifdef AEFFECTX_H_LINUXWORKAROUND
++#  define VstFileType struct _VstFileType
++   struct _VstFileType
++#else
++   struct VstFileType
++#endif
+ {
++
++#ifndef AEFFECTX_H_LINUXWORKAROUND
+ 	VstFileType (char* _name, char *_macType, char *_dosType, char *_unixType = 0, char *_mimeType1 = 0, char *_mimeType2 = 0)
+ 	{
+ 		if (_name)
+@@ -759,6 +768,9 @@
+ 		if (_mimeType2)
+ 			strcpy (mimeType2, _mimeType2);
+ 	}
++#else
++  void *gakk;
++#endif
+ 	char name[128];
+ 	char macType[8];
+ 	char dosType[8];
